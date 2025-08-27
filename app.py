@@ -20,27 +20,30 @@ with left_col:
     if "messages" not in st.session_state:
         st.session_state.messages = [("AI", "Hello! I'm TalentScout. Type 'exit' to stop.")]
 
-    st.markdown("<h2 style='text-align:center;'>Chat</h2>", unsafe_allow_html=True)
 
-    chat_container = st.container()
-    with chat_container:
-        for role, msg in st.session_state.messages:
-            if role == "User":
-                st.markdown(f"<div class='msg user-msg'>{msg}</div>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<div class='msg bot-msg'>{msg}</div>", unsafe_allow_html=True)
+    # Build chat HTML as one block
+    chat_html = "<div class='chat-box'>"
+    for role, msg in st.session_state.messages:
+        if role == "User":
+            chat_html += f"<div class='msg user-msg'>{msg}</div>"
+        else:
+            chat_html += f"<div class='msg bot-msg'>{msg}</div>"
+    chat_html += "</div>"
+
+    # Render the chat
+    st.markdown(chat_html, unsafe_allow_html=True)
     
-    # Input form (prevents adding text until Enter is pressed)
     with st.form("chat_input_form", clear_on_submit=True):
-        st.markdown('<div class="chat-input-row">', unsafe_allow_html=True)
-        
+        st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
+
         col1, col2 = st.columns([6, 1])
         with col1:
             user_input = st.text_input("", key="user_input", placeholder="Type your message...")
         with col2:
             submitted = st.form_submit_button("Send")
-        
+
         st.markdown('</div>', unsafe_allow_html=True)
+
     
     if submitted and user_input:
         if user_input.lower() == "exit":
